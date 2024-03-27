@@ -4,18 +4,25 @@ import {useStateContext} from "../contexts/ContextProvider.jsx";
 import axiosClient from "../axios-client/axios-client.js";
 
 function DefaultLayout(props) {
-    const {user, token, setUser} = useStateContext()
+    const {user, token, setUser, setToken} = useStateContext()
     if (!token) {
         return <Navigate to='/login'/>
     }
 
     const onLogOut = (event) => {
         event.preventDefault()
+        axiosClient.post('/logout')
+            .then(() => {
+                setUser({})
+                setToken(null);
+            })
     }
+
 
     useEffect( () => {
         axiosClient.get('/user')
             .then(({data}) => {
+                console.log(data)
                 setUser(data)
         })
     },[])
